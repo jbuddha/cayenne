@@ -24,6 +24,7 @@
 	<modules>
 		<module>maven-cayenne-plugin</module>
 		<module>maven-cayenne-modeler-plugin</module>
+		<module>gradle-cayenne-plugins</module>
 	</modules>
 
 	<dependencyManagement>
