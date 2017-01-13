@@ -16,39 +16,46 @@
  *  specific language governing permissions and limitations
  *  under the License.
  ****************************************************************/
-package org.apache.cayenne.unit;
 
-import org.apache.cayenne.dba.DbAdapter;
-import org.apache.cayenne.map.DbEntity;
+package org.apache.cayenne.exp.parser;
 
-public class FirebirdUnitDbAdapter extends UnitDbAdapter {
+import org.junit.Test;
 
-    public FirebirdUnitDbAdapter(DbAdapter adapter) {
-        super(adapter);
+import static org.junit.Assert.assertEquals;
+
+/**
+ * @since 4.0
+ */
+public class ASTAggregateTest {
+
+    @Test
+    public void testAvgConstruct() throws Exception {
+        ASTAvg avg = new ASTAvg(null);
+        assertEquals("AVG", avg.getFunctionName());
     }
 
-    @Override
-    public boolean supportsBoolean() {
-        return true;
+    @Test
+    public void testCountConstruct() throws Exception {
+        ASTCount count = new ASTCount(null);
+        assertEquals("COUNT", count.getFunctionName());
     }
 
-    @Override
-    public boolean supportsLobs() {
-        return true;
+    @Test
+    public void testMinConstruct() throws Exception {
+        ASTMin min = new ASTMin(null);
+        assertEquals("MIN", min.getFunctionName());
     }
 
-    @Override
-    public boolean supportsFKConstraints(DbEntity entity) {
-        return !entity.getName().contains("CLOB");
+    @Test
+    public void testMaxConstruct() throws Exception {
+        ASTMax max = new ASTMax(null);
+        assertEquals("MAX", max.getFunctionName());
     }
 
-    @Override
-    public boolean supportsBinaryPK() {
-        return false;
+    @Test
+    public void testSumConstruct() throws Exception {
+        ASTSum sum = new ASTSum(null);
+        assertEquals("SUM", sum.getFunctionName());
     }
 
-    @Override
-    public boolean supportsPKGeneratorConcurrency() {
-        return false;
-    }
 }

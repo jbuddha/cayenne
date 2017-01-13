@@ -16,39 +16,39 @@
  *  specific language governing permissions and limitations
  *  under the License.
  ****************************************************************/
-package org.apache.cayenne.unit;
 
-import org.apache.cayenne.dba.DbAdapter;
-import org.apache.cayenne.map.DbEntity;
+package org.apache.cayenne.dba.db2;
 
-public class FirebirdUnitDbAdapter extends UnitDbAdapter {
+import org.apache.cayenne.access.translator.ejbql.EJBQLConditionTranslator;
+import org.apache.cayenne.access.translator.ejbql.EJBQLTranslationContext;
+import org.apache.cayenne.ejbql.EJBQLExpression;
+import org.apache.cayenne.ejbql.parser.EJBQLTrimSpecification;
 
-    public FirebirdUnitDbAdapter(DbAdapter adapter) {
-        super(adapter);
+/**
+ * @since 4.0
+ */
+public class DB2EJBQLConditionTranslator extends EJBQLConditionTranslator {
+
+    DB2EJBQLConditionTranslator(EJBQLTranslationContext context) {
+        super(context);
     }
 
     @Override
-    public boolean supportsBoolean() {
+    public boolean visitTrim(EJBQLExpression expression, int finishedChildIndex) {
+        if (finishedChildIndex < 0) {
+            if (!(expression.getChild(0) instanceof EJBQLTrimSpecification)) {
+                context.append(" {fn TRIM(");
+            }
+        } else if (finishedChildIndex + 1 == expression.getChildrenCount()) {
+            context.append(")}");
+        }
+
         return true;
     }
 
     @Override
-    public boolean supportsLobs() {
-        return true;
-    }
-
-    @Override
-    public boolean supportsFKConstraints(DbEntity entity) {
-        return !entity.getName().contains("CLOB");
-    }
-
-    @Override
-    public boolean supportsBinaryPK() {
-        return false;
-    }
-
-    @Override
-    public boolean supportsPKGeneratorConcurrency() {
+    public boolean visitTrimBoth(EJBQLExpression expression) {
+        context.append(" {fn TRIM(");
         return false;
     }
 }

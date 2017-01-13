@@ -18,6 +18,7 @@
  ****************************************************************/
 package org.apache.cayenne.exp;
 
+import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.query.Ordering;
 import org.apache.cayenne.query.PrefetchTreeNode;
 import org.apache.cayenne.query.SortOrder;
@@ -123,6 +124,26 @@ public class Property<E> {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * @since 4.0
+     * @return alias for this property
+     */
+    public String getAlias() {
+        if(getName() == null) {
+            return null;
+        }
+
+        // check if default name for Path expression is overridden
+        Expression exp = getExpression();
+        if(exp instanceof ASTPath) {
+            if(((ASTPath) exp).getPath().equals(getName())) {
+                return null;
+            }
+        }
+
+        return getName();
     }
 
     /**
@@ -473,7 +494,7 @@ public class Property<E> {
      * @return Ascending sort orderings on this property.
      */
     public Ordering asc() {
-        return new Ordering(getName(), SortOrder.ASCENDING);
+        return new Ordering(getExpression(), SortOrder.ASCENDING);
     }
 
     /**
@@ -489,7 +510,7 @@ public class Property<E> {
      * @return Ascending case insensitive sort orderings on this property.
      */
     public Ordering ascInsensitive() {
-        return new Ordering(getName(), SortOrder.ASCENDING_INSENSITIVE);
+        return new Ordering(getExpression(), SortOrder.ASCENDING_INSENSITIVE);
     }
 
     /**
@@ -505,7 +526,7 @@ public class Property<E> {
      * @return Descending sort orderings on this property.
      */
     public Ordering desc() {
-        return new Ordering(getName(), SortOrder.DESCENDING);
+        return new Ordering(getExpression(), SortOrder.DESCENDING);
     }
 
     /**
@@ -521,7 +542,7 @@ public class Property<E> {
      * @return Descending case insensitive sort orderings on this property.
      */
     public Ordering descInsensitive() {
-        return new Ordering(getName(), SortOrder.DESCENDING_INSENSITIVE);
+        return new Ordering(getExpression(), SortOrder.DESCENDING_INSENSITIVE);
     }
 
     /**
@@ -615,7 +636,7 @@ public class Property<E> {
     }
 
     public static <T> Property<T> create(Expression expression, Class<? super T> type) {
-        return new Property<>(expression.expName().toLowerCase(), expression, type);
+        return new Property<>(null, expression, type);
     }
 
     public static <T> Property<T> create(String name, Expression expression, Class<? super T> type) {

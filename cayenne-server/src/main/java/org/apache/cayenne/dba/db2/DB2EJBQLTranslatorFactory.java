@@ -16,39 +16,22 @@
  *  specific language governing permissions and limitations
  *  under the License.
  ****************************************************************/
-package org.apache.cayenne.unit;
 
-import org.apache.cayenne.dba.DbAdapter;
-import org.apache.cayenne.map.DbEntity;
+package org.apache.cayenne.dba.db2;
 
-public class FirebirdUnitDbAdapter extends UnitDbAdapter {
+import org.apache.cayenne.access.translator.ejbql.EJBQLTranslationContext;
+import org.apache.cayenne.access.translator.ejbql.JdbcEJBQLTranslatorFactory;
+import org.apache.cayenne.ejbql.EJBQLExpressionVisitor;
 
-    public FirebirdUnitDbAdapter(DbAdapter adapter) {
-        super(adapter);
-    }
-
-    @Override
-    public boolean supportsBoolean() {
-        return true;
-    }
+/**
+ * @since 4.0
+ */
+public class DB2EJBQLTranslatorFactory extends JdbcEJBQLTranslatorFactory {
 
     @Override
-    public boolean supportsLobs() {
-        return true;
+    public EJBQLExpressionVisitor getConditionTranslator(EJBQLTranslationContext context) {
+        context.setCaseInsensitive(caseInsensitive);
+        return new DB2EJBQLConditionTranslator(context);
     }
 
-    @Override
-    public boolean supportsFKConstraints(DbEntity entity) {
-        return !entity.getName().contains("CLOB");
-    }
-
-    @Override
-    public boolean supportsBinaryPK() {
-        return false;
-    }
-
-    @Override
-    public boolean supportsPKGeneratorConcurrency() {
-        return false;
-    }
 }

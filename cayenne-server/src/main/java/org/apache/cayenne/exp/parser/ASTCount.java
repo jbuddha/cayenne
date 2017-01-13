@@ -16,39 +16,35 @@
  *  specific language governing permissions and limitations
  *  under the License.
  ****************************************************************/
-package org.apache.cayenne.unit;
 
-import org.apache.cayenne.dba.DbAdapter;
-import org.apache.cayenne.map.DbEntity;
+package org.apache.cayenne.exp.parser;
 
-public class FirebirdUnitDbAdapter extends UnitDbAdapter {
+import org.apache.cayenne.exp.Expression;
 
-    public FirebirdUnitDbAdapter(DbAdapter adapter) {
-        super(adapter);
+/**
+ * @since 4.0
+ */
+public class ASTCount extends ASTAggregateFunctionCall {
+
+    ASTCount(int id) {
+        super(id, "COUNT");
+    }
+
+    public ASTCount(Expression expression) {
+        super("COUNT", expression);
+    }
+
+    public ASTCount() {
+        super("COUNT", new ASTAsterisk());
     }
 
     @Override
-    public boolean supportsBoolean() {
-        return true;
+    protected Object evaluateNode(Object o) throws Exception {
+        return o; // TODO: how to evaluate aggregation function?
     }
 
     @Override
-    public boolean supportsLobs() {
-        return true;
-    }
-
-    @Override
-    public boolean supportsFKConstraints(DbEntity entity) {
-        return !entity.getName().contains("CLOB");
-    }
-
-    @Override
-    public boolean supportsBinaryPK() {
-        return false;
-    }
-
-    @Override
-    public boolean supportsPKGeneratorConcurrency() {
-        return false;
+    public Expression shallowCopy() {
+        return new ASTCount(id);
     }
 }
